@@ -17,7 +17,7 @@ random.seed(777)
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Instantiate the model
-model = LSTMDENSE().to(DEVICE)
+model = VanillaLSTM().to(DEVICE)
 model = torch.nn.DataParallel(model)
 
 # print the model structure
