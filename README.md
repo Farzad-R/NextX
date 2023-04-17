@@ -87,8 +87,6 @@ I will implement some custom models as well as some well-known published models 
 │
 ├── main.py                 # Entry point for the preprocesing pipeline
 └── train.py                # Entry point for the training pipeline
-
-
 ```
 ### Environment Requirements
 
