@@ -39,7 +39,7 @@ I will implement some custom models as well as some well-known published models 
 ### Benchmarks and SOTA models that will be implemented:
 - [x] VanillaLSTM: Custom design
 - [x] LSTMDENSE: Custom design
-- [x] StackedLSTMDENSE: Custom design
+- [x] LSTMAutoEncoder: Custom design
 - [TODO] CNNLSTM: Custom design
 - [TODO] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
 - [TODO] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
@@ -48,11 +48,11 @@ I will implement some custom models as well as some well-known published models 
 
 ## Comparison of different models
 <!-- We provide all experiment script files in `./scripts`: -->
-| Model         | TEST MSE            | Number of parameters   | Number of epochs        | AVG epoch time (s)     |
-| ------------- | --------------------| -----------------------| ------------------------| -----------------------|
-| VanillaLSTM   | 0.0117              |128,364                 | 52                      | 35.0                   |
-| LSTMDENSE     | 0.0119              |137,932                 | 34                      | 35.0                   |
-
+| Model          | TEST MSE            | Number of parameters   | Number of epochs        | AVG epoch time (s)     |
+| ---------------| --------------------| -----------------------| ------------------------| -----------------------|
+| VanillaLSTM    | 0.0117              |128,364                 | 52                      | 35.0                   |
+| LSTMDENSE      | 0.0119              |137,932                 | 34                      | 35.0                   |
+| LSTMAutoEncoder| 0.0119              |305,662                 | 44                      | 37.0                   |
 
 ## Getting Started
 

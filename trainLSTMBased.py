@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 import time
 import os
 from src.utils.EarlyStopping import EarlyStopper
-from src.models.univariate.LSTMBased import VanillaLSTM, LSTMDENSE
+from src.models.univariate.LSTMBased import VanillaLSTM, LSTMDENSE, LSTMAutoEncoder
 from tqdm import tqdm
 from typing import Tuple
 random.seed(777)
@@ -17,7 +17,7 @@ random.seed(777)
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Instantiate the model
-model = VanillaLSTM().to(DEVICE)
+model = LSTMAutoEncoder().to(DEVICE)
 model = torch.nn.DataParallel(model)
 
 # print the model structure
