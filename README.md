@@ -36,9 +36,9 @@ All the dependecies are provided in the requirement.txt file.
 I will implement some custom models as well as some well-known published models and evaluate their performance.
 
 ### Benchmarks and SOTA models that will be implemented:
-- [x] VanillaLSTM: custom architecture
-- [x] LSTMDENSE: custom architecture
-- [TODO] CNNLSTM: custom architecture
+- [x] VanillaLSTM: Custom design
+- [x] LSTMDENSE: Custom design
+- [TODO] CNNLSTM: Custom design
 - [TODO] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
 - [TODO] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
 - [TODO] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
