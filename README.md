@@ -20,6 +20,7 @@ All the models are implemented in python (v3.9.16) with the following key depend
 - numpy: 1.24.1
 - pandas: 1.5.3
 - scikit-learn: 1.2.2
+- tqdm: 4.65.0
 
 All the dependecies are provided in the requirement.txt file.
 
@@ -102,10 +103,35 @@ pip install -r requirements.txt
 ### Data Preparation
 
 The required raw weather file (WTH.csv) is already placed in `./data/raw`.
+In order to preprocess the data:
+1. Open the terminal
+2. Activate the environment
+3. execute the following commands:
+```
+python main.py clean_wth                
+python main.py prepare_target           
+python main.py prepare_features
+python main.py prepare_time_features
+```
 
+These commands will automatially clean and process the weather data. And due to the purpose of experimenting different form of datasets and models, the following datasets will be created in `data/training/wth/{windowsize}_{horizon}_{skip}` folder and for each {train/test/validation} set.
+- x_feat_{}.npy
+- x_{}.npy
+- x_{}_fut_time.npy
+- x_{}_hist_time.npy
+- y_{}.npy
 
 ### Training Example
-- 
+As this repository is intended for experimentation purposes, allowing for exploration of various model architectures and dataset combinations, the training process is not fully automated. Therefore, each training module can be executed following these steps:
+
+1. Set the desired config in `config/training.cfg`
+2. Import the desired model, in the corresponding module and set the model
+3. Open the terminal and run the module. 
+Example:
+```
+python trainLSTMBased.py
+```
+
 
 
 

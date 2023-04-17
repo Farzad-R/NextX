@@ -190,8 +190,8 @@ for epoch in range(EPOCHS):
 
         test_loss /= len(test_dataloader)
     test_results.append(test_loss)
-    print('epoch: {:3d} | time: {:5.2f}s | train MSE: {:5.4f} | val MSE: {:5.4f} | test MSE: {:5.4f}'.format(
-        epoch+1, (time.time() - epoch_start_time), train_loss, val_loss, test_loss))
+    print('Time: {:5.2f}s | Train MSE: {:5.4f} | Val MSE: {:5.4f} | Test MSE: {:5.4f}'.format(
+        (time.time() - epoch_start_time), train_loss, val_loss, test_loss))
     # scheduler.step()
     optimizer_scheduler.step(val_loss)
 
