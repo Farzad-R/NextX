@@ -13,6 +13,20 @@ from tqdm import tqdm
 from typing import Tuple
 random.seed(777)
 
+# Set the device
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Instantiate the model
+model = LSTMDENSE().to(DEVICE)
+model = torch.nn.DataParallel(model)
+
+# print the model structure
+print("Model architecture:")
+print(model)
+# count the number of parameters
+num_params = sum(p.numel() for p in model.parameters())
+print("Number of parameters in the model:", num_params)
+
 # read the configs
 config = configparser.ConfigParser()
 config.read(os.path.join(here("config/training.cfg")))
@@ -23,7 +37,6 @@ SKIP = int(config["TRAINING"]["SKIP"])
 NUM_WORKERS = int(config["TRAINING"]["NUM_WORKERS"])
 
 # Define constants
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 EPOCHS = int(config["VanillaLSTM"]["EPOCHS"])
 BATCH_SIZE = int(config["VanillaLSTM"]["BATCH_SIZE"])
@@ -117,16 +130,6 @@ test_dataset = NumpyDataset(
     x_test_path, x_feat_test, x_test_hist_time, x_test_fut_time, y_test_path, test_length)
 test_dataloader = DataLoader(
     test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
-
-# Instantiate the model
-model = VanillaLSTM().to(DEVICE)
-model = torch.nn.DataParallel(model)
-# print the model structure
-print("Model architecture:")
-print(model)
-# count the number of parameters
-num_params = sum(p.numel() for p in model.parameters())
-print("Number of parameters in the model:", num_params)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 criterion = torch.nn.MSELoss()

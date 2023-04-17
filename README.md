@@ -127,6 +127,7 @@ As this repository is intended for experimentation purposes, allowing for explor
 1. Set the desired config in `config/training.cfg`
 2. Import the desired model, in the corresponding module and set the model
 3. Open the terminal and run the module. 
+
 Example:
 ```
 python trainLSTMBased.py
