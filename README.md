@@ -37,9 +37,9 @@ All the dependecies are provided in the requirement.txt file.
 I will implement some custom models as well as some well-known published models and evaluate their performance.
 
 ### Benchmarks and SOTA models that will be implemented:
-- [x] VanillaLSTM: Custom design
-- [x] LSTMDENSE: Custom design
-- [x] LSTMAutoEncoder: Custom design
+- [x] [VanillaLSTM](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
+- [x] [LSTMDENSE](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
+- [x] [LSTMAutoEncoder](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [TODO] CNNLSTM: Custom design
 - [TODO] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
 - [TODO] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
