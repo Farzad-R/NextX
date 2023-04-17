@@ -1,4 +1,4 @@
-# NextX: Forecasting Wind Speed for the Next 12 Hours
+# NextX: Forecasting Wind Speed for the Next X Hours
 
 This repository contains various state-of-the-art models and custom models for predicting the next 12 hours of wind speed from a weather station. The aim of this project is to evaluate the performance of different models on the same dataset, as well as to test some novel models that have not been explored in existing research. At this point, all the models are designed in a multivariate-to-univariate format.
 
@@ -65,15 +65,8 @@ pip install -r requirements.txt
 
 ### Data Preparation
 
-You can obtain all the nine benchmarks from [Google Drive](https://drive.google.com/drive/folders/1ZOYpTUa82_jCcxIdTmyr0LXQfvaM9vIy) provided in Autoformer. All the datasets are well pre-processed and can be used easily.
+The required raw weather files is already placed in `./data/raw`.
 
-```
-mkdir data
-cd data
-mkdir raw
-```
-
-**Please put them in the `./data/raw` directory**
 
 ### Training Example
 - 
