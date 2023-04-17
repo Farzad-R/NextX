@@ -59,34 +59,36 @@ I will implement some custom models as well as some well-known published models 
 ```
 .
 ├── data
-│   ├── training            # (auto-generate)
-│   ├── clean               # (auto-generate)
-│   └── raw                 # The raw data
-│       └── WTH.csv         # The weather forecast data
+│   ├── training                    # (auto-generate)
+│   ├── clean                       # (auto-generate)
+│   └── raw                         # The raw data
+│       └── WTH.csv                 # The weather forecast data
 │
-├── xplr_notebooks          # Data exploration jupyter notebooks
+├── xplr_notebooks                  # Data exploration jupyter notebooks
 │
-├── config                  # config files for the pipeline
+├── config                          # config files for the pipeline
 │
-├── src                     # Contains the codes of the main pipeline
-│   ├── utils               # Includes utils.py module
+├── src                             # Contains the codes of the main pipeline
+│   ├── utils                       # Includes utils.py module
 │   │   ├── EarlyStopping.py
 │   │   └── utils.py.csv
 │   ├── clean
-│   │   └──CleanWTH.py
+│   │   └── CleanWTH.py
 │   ├── dataprep
-│   ├── models
+│   └── models
+│       └── univariate
+│           └── LSTMbased.py
 │
 ├── logs                    
 │   ├── debug.log               
 │   └── info.log
 │
-├── requirements.txt        # Required dependencies of the project
+├── requirements.txt                # Required dependencies of the project
 ├── README.md
 ├── .gitignore
 │
-├── main.py                 # Entry point for the preprocesing pipeline
-└── train.py                # Entry point for the training pipeline
+├── main.py                         # Entry point for the preprocesing pipeline
+└── train.py                        # Entry point for the training pipeline
 ```
 ### Environment Requirements
 
