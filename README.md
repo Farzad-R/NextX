@@ -65,7 +65,7 @@ pip install -r requirements.txt
 
 ### Data Preparation
 
-The required raw weather files is already placed in `./data/raw`.
+The required raw weather file (WTH.csv) is already placed in `./data/raw`.
 
 
 ### Training Example
