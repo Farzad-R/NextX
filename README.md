@@ -2,7 +2,6 @@
 
 This repository contains various state-of-the-art models and custom models for predicting the next 12 hours of wind speed from a weather station. The aim of this project is to evaluate the performance of different models on the same dataset, as well as to test some novel models that have not been explored in existing research. At this point, all the models are designed in a multivariate-to-univariate format.
 
-
 ##  Dataset
 The dataset used in this project is collected from a weather station, containing historical wind speed (target variable) and 11 other climatological data measurements with a 1-hour resolution, for 4 years from 2010 to 2013. The dataset is preprocessed and split into training , validation, and test sets for model training and evaluation. Data was collected from [here](https://www.ncei.noaa.gov/data/local-climatological-data/).
 
@@ -54,6 +53,43 @@ I will implement some custom models as well as some well-known published models 
 
 
 ## Getting Started
+
+### Project structure
+
+```
+.
+├── data
+│   ├── training            # (auto-generate)
+│   ├── clean               # (auto-generate)
+│   └── raw                 # The raw data
+│       └── WTH.csv         # The weather forecast data
+│
+├── xplr_notebooks          # Data exploration jupyter notebooks
+│
+├── config                  # config files for the pipeline
+│
+├── src                     # Contains the codes of the main pipeline
+│   ├── utils               # Includes utils.py module
+│   │   ├── EarlyStopping.py
+│   │   └── utils.py.csv
+│   ├── clean
+│   │   └──CleanWTH.py
+│   ├── dataprep
+│   ├── models
+│
+├── logs                    
+│   ├── debug.log               
+│   └── info.log
+│
+├── requirements.txt        # Required dependencies of the project
+├── README.md
+├── .gitignore
+│
+├── main.py                 # Entry point for the preprocesing pipeline
+└── train.py                # Entry point for the training pipeline
+
+
+```
 ### Environment Requirements
 
 First, please make sure you have installed Conda. Then, the environment can be installed using:
