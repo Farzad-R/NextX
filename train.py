@@ -10,6 +10,7 @@ import os
 from src.utils.EarlyStopping import EarlyStopper
 from src.models.univariate.LSTMBased import VanillaLSTM, LSTMDENSE
 from tqdm import tqdm
+from typing import Tuple
 random.seed(777)
 
 # read the configs
@@ -64,12 +65,15 @@ train_length = np.load(y_train_path, allow_pickle=True).shape[0]
 valid_length = np.load(y_valid_path, allow_pickle=True).shape[0]
 test_length = np.load(y_test_path, allow_pickle=True).shape[0]
 
-print("\n x_train length", train_length)
-print("\n x_valid length", valid_length)
-print("\n x_test length", test_length)
+print("x_train length", train_length, "x_valid length",
+      valid_length, "x_test length", test_length)
 
 
 class NumpyDataset(Dataset):
+    """
+    Attention: this class reads the numpy arrays in mmap_mode to avoid loading them on the memory.
+    """
+
     def __init__(self, x_path, feat_path, hist_time_path, fut_time_path, y_path, data_length):
         self.x_path = x_path
         self.feat_path = feat_path
@@ -83,10 +87,10 @@ class NumpyDataset(Dataset):
         self.x_hist_time = np.load(self.hist_time_path, mmap_mode='r')
         self.y = np.load(self.y_path, mmap_mode='r')
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.data_length
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx) -> Tuple[np.ndarray, np.ndarray]:
         x = np.copy(self.x[idx])
         x_Feat = np.copy(self.x_Feat[idx])
         x_hist_time = np.copy(self.x_hist_time[idx])
@@ -115,15 +119,18 @@ test_dataloader = DataLoader(
     test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
 # Instantiate the model
-model = LSTMDENSE().to(DEVICE)
+model = VanillaLSTM().to(DEVICE)
 model = torch.nn.DataParallel(model)
 # print the model structure
+print("Model architecture:")
 print(model)
+# count the number of parameters
+num_params = sum(p.numel() for p in model.parameters())
+print("Number of parameters in the model:", num_params)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 criterion = torch.nn.MSELoss()
 
-# scheduler = lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 early_stopper = EarlyStopper(
     patience=EARLY_STOPPING_PATIENCE,
     min_delta=0.00001
@@ -166,7 +173,6 @@ for epoch in range(EPOCHS):
             inputs, targets = inputs.to(DEVICE), targets.to(DEVICE)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
-            # val_loss += loss.item() * inputs.size(0)
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
 

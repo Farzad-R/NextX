@@ -1,27 +1,27 @@
 import numpy as np
 import pandas as pd
-import os
+from typing import List, Tuple
 
 
-def feature_wise_normalize_df(df):
+def feature_wise_normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     return (df - df.min().min()) / (df.max().max() - df.min().min())
 
 
-def normalize_df(df):
+def normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     df_min = df.min()
     df_range = df.max() - df.min()
     return (df - df_min) / df_range
 
 
-def create_sequences_from_1darray(arr, window_size, horizon, skip):
+def create_sequences_from_1darray(arr: np.ndarray, window_size: int, horizon: int, skip: int) -> Tuple[np.ndarray, np.ndarray]:
     X, y = [], []
     for i in range(0, len(arr) - window_size - horizon + 1 - skip):
-        X.append(arr[i : i + window_size])
-        y.append(arr[i + window_size + skip : i + window_size + skip + horizon])
+        X.append(arr[i: i + window_size])
+        y.append(arr[i + window_size + skip: i + window_size + skip + horizon])
     return np.array(X), np.array(y)
 
 
-def generate_sequence(df, window_size, horizon, skip):
+def generate_sequence(df: pd.DataFrame, window_size: int, horizon: int, skip: int) -> Tuple[np.ndarray, np.ndarray]:
     result_x = []
     result_y = []
     if len(df) > horizon + skip + window_size:
@@ -53,7 +53,7 @@ def generate_sequence(df, window_size, horizon, skip):
     return concatenated_x_array, concatenated_y_array
 
 
-def extract_feature_sequences(df, window_size, horizon, skip):
+def extract_feature_sequences(df: pd.DataFrame, window_size: int, horizon: int, skip: int) -> np.ndarray:
     x_feats = []
     for col in df.columns:
         x_feat, _ = generate_sequence(
@@ -84,7 +84,7 @@ def add_time_related_features_to_df(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def extract_time_sequences(df, window_size, horizon, skip):
+def extract_time_sequences(df: pd.DataFrame, window_size: int, horizon: int, skip: int) -> Tuple[np.ndarray, np.ndarray]:
     historical = []
     label = []
     for col in df.columns:
