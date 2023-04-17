@@ -115,11 +115,11 @@ python main.py prepare_time_features
 ```
 
 These commands will automatially clean and process the weather data. And due to the purpose of experimenting different form of datasets and models, the following datasets will be created in `data/training/wth/{windowsize}_{horizon}_{skip}` folder and for each {train/test/validation} set.
-- x_feat_{}.npy: Contains the  selected climatological data measurements in sequential format (Number of samples, windosize, number of features)
-- x_{}.npy: Contains the target (wind speed) data measurements in sequential format (Number of samples, windosize, 1)
-- x_{}_fut_time.npy: Contains the future cyclic time features (Number of samples, horizon, 6)
-- x_{}_hist_time.npy: Contains the historical cyclic time features (Number of samples, windowsize, 6)
-- y_{}.npy: Contains the labels (Number of samples, horizon)
+- **x_feat_{}.npy**: Contains the  selected climatological data measurements in sequential format (Number of samples, windosize, number of features)
+- **x_{}.npy**: Contains the target (wind speed) data measurements in sequential format (Number of samples, windosize, 1)
+- **x_{}_fut_time.npy**: Contains the future cyclic time features (Number of samples, horizon, 6)
+- **x_{}_hist_time.npy**: Contains the historical cyclic time features (Number of samples, windowsize, 6)
+- **y_{}.npy**: Contains the labels (Number of samples, horizon)
 
 ### Training Example
 As this repository is intended for experimentation purposes, allowing for exploration of various model architectures and dataset combinations, the training process is not fully automated. Therefore, each training module can be executed following these steps:
