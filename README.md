@@ -40,11 +40,12 @@ I will implement some custom models as well as some well-known published models 
 - [x] [VanillaLSTM](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [LSTMDENSE](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [LSTMAutoEncoder](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
-- [TODO] CNNLSTM: Custom design
-- [TODO] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
-- [TODO] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
-- [TODO] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
-- [TODO] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
+- [] CNNLSTM: Custom design
+- [] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
+- [] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
+- [] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
+- [] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
+- [] [Tranformer](https://arxiv.org/abs/1706.03762) (Advances in neural information processing systems 2107)
 
 ## Comparison of different models
 <!-- We provide all experiment script files in `./scripts`: -->
