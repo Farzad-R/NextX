@@ -1,14 +1,10 @@
-# for checking how argparse works: https://docs.python.org/3/howto/argparse.html
-# code example:
-# - open terminal in the project directory
-# - invoke the environment
-# - run:
-
 import argparse
 from src.clean.CleanWTH import clean_wth
 from src.dataprep.PrepareTarget import prepare_target
 from src.dataprep.PrepareFeat import prepare_features
 from src.dataprep.PrepareTimeFeatures import prepare_time_features
+from src.dataprep.TransformerDataPrep import prepare_transformer_dataset
+
 import src.config
 import logging
 
@@ -28,6 +24,7 @@ def init_tasks():
         "prepare_target": prepare_target,
         "prepare_features": prepare_features,
         "prepare_time_features": prepare_time_features,
+        "prepare_transformer_dataset": prepare_transformer_dataset
     }
 
     # Union of dicts
