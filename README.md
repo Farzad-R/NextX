@@ -96,6 +96,9 @@ I will arrange the models in descending order of performance, with the top model
 ├── .gitignore
 │
 ├── main.py                         # Entry point for the preprocesing pipeline
+├── FEDformerTrain.py
+├── InformerTrain.py
+├── 
 └── train.py                        # Entry point for the training pipeline
 ```
 ### Environment Requirements
@@ -109,11 +112,19 @@ pip install -r requirements.txt
 
 ### Data Preparation
 
-The required raw weather file (WTH.csv) is already placed in `./data/raw`.
+The required raw weather file (WTH.csv) is already placed in `./data/raw`. The dataset required to train transformer models is different from other benchamrks. Therefore two differnet sets of datasets can be generated. Please follwo the steps below:
+
 In order to preprocess the data:
 1. Open the terminal
 2. Activate the environment
-3. execute the following commands:
+
+For `transformer based` models run:
+```
+python main.py clean_wth                
+python main.py prepare_transformer_dataset
+```
+
+For `other benchmarks` run:
 ```
 python main.py clean_wth                
 python main.py prepare_target           
