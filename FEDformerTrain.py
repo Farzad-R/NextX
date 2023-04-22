@@ -15,6 +15,7 @@ import json
 random.seed(777)
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print("Running on:", DEVICE)
 """
 Fedformer is modified by adding one linear layer at the end to predict univariate target.
 """

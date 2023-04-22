@@ -57,7 +57,8 @@ I will arrange the models in descending order of performance, with the top model
 | LSTMDENSE             | 0.0119                |137,932                    | 34                        | 35.0                   |
 | LSTMAutoEncoder       | 0.0119                |305,662                    | 44                        | 37.0                   |
 | Informer              | 0.0162                |1,852,033                  | 9                         | 470.0                  |
-| FEDformer(Wavelet)    | Not enough GPU        |100,785,984                | _                         | _                      |
+| Autoformer            | TBD                   |20,532                     | TBD                       | TBD                    |
+| FEDformer(Wavelet)    |TBD                    |100,785,984                | TBD                       | TBD                    |
 
 
 ## Getting Started

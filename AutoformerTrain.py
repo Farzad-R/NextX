@@ -8,39 +8,24 @@ from torch.utils.data import Dataset, DataLoader
 import time
 import os
 from src.utils.EarlyStopping import EarlyStopper
-from src.models.Transformers.FEDformer import Model
+from src.models.Transformers.Autoformer import Model
 from tqdm import tqdm
 from typing import Tuple
 import json
 random.seed(777)
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print("Running on:", DEVICE)
 """
-Fedformer is modified by adding one linear layer at the end to predict univariate target.
+AutoFormer is modified by adding one linear layer at the end to predict univariate target.
 """
-# Instantiate the model:
 
-# input:
-# enc = torch.randn([3, 168, 12])
-# enc_mark = torch.randn([3, 168, 4])
-# dec = torch.randn([3, 36, 1])
-# dec_mark = torch.randn([3, 36, 4])
-
-# output:
-# torch.Size([3, 36, 1])
 
 class Configs(object):
     config = configparser.ConfigParser()
     config.read(os.path.join(here("config/training.cfg")))
-    config_header = "FEDformer"
-    ab = int(config[config_header]["ab"])
-    modes = int(config[config_header]["modes"])  # 32
-    mode_select = config[config_header]["mode_select"]  # 'random'
-    version = config[config_header]["version"]  # 'Wavelets'  'Fourier'
+    config_header = "Autoformer"
     moving_avg = json.loads(config.get(config_header, "moving_avg"))
-    L = 1
-    base = config[config_header]["base"]  # legendre
-    cross_activation = config[config_header]["cross_activation"]  # tanh
     seq_len = int(config[config_header]["seq_len"])  # windowsize or lookback
     # labeld samples attached to horizon
     label_len = int(config[config_header]["label_len"])
@@ -61,12 +46,24 @@ class Configs(object):
     c_out = int(config[config_header]["c_out"])  # number of output features
     # 1 means univariate prediction
     activation = config[config_header]["activation"]
-    wavelet = 0
 
 
+# %%
 model_configs = Configs()
 model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
+
+# Instantiate the model:
+
+# print('parameter number is {}'.format(sum(p.numel()
+#       for p in model.parameters())))
+# enc = torch.randn([3, 168, 12])
+# enc_mark = torch.randn([3, 168, 4])
+
+# dec = torch.randn([3, 60, 12])
+# dec_mark = torch.randn([3, 60, 4])
+# out = model.forward(enc, enc_mark, dec, dec_mark)
+# print(out)
 # %%
 # print the model structure
 print("Model architecture:")
@@ -215,8 +212,6 @@ for epoch in range(EPOCHS):
     for batch_x, batch_y, batch_x_mark, batch_y_mark in progress_bar:
         batch_x, batch_y, batch_x_mark, batch_y_mark = batch_x.to(DEVICE), batch_y.to(
             DEVICE), batch_x_mark.to(DEVICE), batch_y_mark.to(DEVICE)
-        # print(batch_x.shape, batch_y.shape,
-        #   batch_x_mark.shape, batch_y_mark.shape)
         optimizer.zero_grad()
         # decoder input
         dec_inp = torch.zeros_like(
@@ -239,6 +234,7 @@ for epoch in range(EPOCHS):
     # break
     train_loss /= len(train_dataloader)
     train_results.append(train_loss)
+    # print("We are here:", train_loss)
 
     model.eval()
     val_loss = 0.0
@@ -253,11 +249,15 @@ for epoch in range(EPOCHS):
             dec_inp = torch.cat(
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
             # outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
-            loss = criterion(outputs,
-                             batch_y[:, -model_configs.pred_len:])
+            # if batch_y.shape[0] < BATCH_SIZE:
+            #     loss = criterion(outputs,
+            #                      batch_y[-model_configs.pred_len:])
+
+            loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
         valid_results.append(val_loss)
@@ -295,9 +295,9 @@ for epoch in range(EPOCHS):
         test_loss /= len(test_dataloader)
     test_results.append(test_loss)
     print('Time: {:5.2f}s | Train MSE: {:5.4f} | Val MSE: {:5.4f} | Test MSE: {:5.4f}'.format(
-        (time.time() - epoch_start_time), train_loss, val_loss, test_loss))
+        (time.time() - epoch_start_time), train_loss, test_loss, test_loss))
     # scheduler.step()
-    optimizer_scheduler.step(val_loss)
+    # optimizer_scheduler.step(val_loss)
 
 print("Best MSE:", "train:", min(train_results), "valid:",
       min(valid_results), "Test:", min(test_results))

@@ -14,7 +14,7 @@ random.seed(777)
 
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+print("Running on:", DEVICE)
 # Instantiate the model:
 
 # input:
