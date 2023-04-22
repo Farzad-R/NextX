@@ -66,12 +66,15 @@ def prepare_transformer_dataset():
     df = normalize_df(df)  # Normalize the dataframe
     df = df.reset_index()
     # separate target to be able to perform MV input, Univariate output
-    df_y = df[[TARGET]]
+    
 
     cols_data = df.columns[1:]  # Select all columns except date
     df_data = df[cols_data]  # take all the columns axcept date
+    windspeed = df.pop(TARGET) # remove the 'windspeed' column
+    df.insert(0, TARGET, windspeed) # insert the 'windspeed' column at the first position
     data_x = df_data.values  # convert to numpy
-    data_y = df_y.values
+    # df_y = df[[TARGET]]
+    data_y = df_data.values
     print("data_x shape:", data_x.shape)
     print("data_y shape:", data_x.shape)
 

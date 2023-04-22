@@ -21,7 +21,6 @@ class Model(nn.Module):
     """
     FEDformer performs the attention mechanism on frequency domain and achieved O(N) complexity
     """
-
     def __init__(self, configs):
         super(Model, self).__init__()
         self.version = configs.version
@@ -122,8 +121,6 @@ class Model(nn.Module):
             projection=nn.Linear(configs.d_model, configs.c_out, bias=True)
         )
 
-        self.output = nn.Linear(144, 12)
-
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
         batch_size = x_enc.shape[0]
@@ -147,14 +144,11 @@ class Model(nn.Module):
                                                  trend=trend_init)
         # final
         dec_out = trend_part + seasonal_part
-        out = dec_out[:, -self.pred_len:, :]
-        out = out.reshape(batch_size, 144)
-        out = self.output(out)
-        # if self.output_attention:
-        # return dec_out[:, -self.pred_len:, :], attns
-        # else:
-        # return dec_out[:, -self.pred_len:, :]  # [B, L, D]
-        return out
+
+        if self.output_attention:
+            return dec_out[:, -self.pred_len:, :], attns
+        else:
+            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
 
 
 # %%

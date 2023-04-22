@@ -82,9 +82,7 @@ class Model(nn.Module):
         if self.output_attention:
             return dec_out[:, -self.pred_len:, :], attns
         else:
-            out = dec_out[:, -self.pred_len:, :]
-        # print(out.shape)
-        return out
+            return dec_out[:, -self.pred_len:, :]
 
 # %%
 # class Configs(object):

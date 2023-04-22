@@ -53,10 +53,10 @@ I will arrange the models in descending order of performance, with the top model
 <!-- We provide all experiment script files in `./scripts`: -->
 | Model                 | TEST MSE              | Number of parameters      | Number of epochs          | AVG epoch time (s)     |
 | ---------------       | --------------------  | -----------------------   | ------------------------  | -----------------------|
+| Informer              | 0.0100                |673,420                    |256                        | 14.5                  |
 | VanillaLSTM           | 0.0117                |128,364                    | 52                        | 35.0                   |
 | LSTMDENSE             | 0.0119                |137,932                    | 34                        | 35.0                   |
 | LSTMAutoEncoder       | 0.0119                |305,662                    | 44                        | 37.0                   |
-| Informer              | 0.0162                |1,852,033                  | 9                         | 470.0                  |
 | Autoformer            | TBD                   |20,532                     | TBD                       | TBD                    |
 | FEDformer(Wavelet)    |TBD                    |100,785,984                | TBD                       | TBD                    |
 

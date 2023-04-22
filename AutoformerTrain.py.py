@@ -13,13 +13,16 @@ from tqdm import tqdm
 from typing import Tuple
 import json
 random.seed(777)
+
+"""
+Informer performs multi-input multi-output prediction. 
+However, we are only interested in the predicted values of windspeed. 
+Therefore, we will evaluate the model's performance using multi-input single-output metrics.
+"""
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Running on:", DEVICE)
-"""
-AutoFormer is modified by adding one linear layer at the end to predict univariate target.
-"""
-
+# Instantiate the model:
 
 class Configs(object):
     config = configparser.ConfigParser()
@@ -48,40 +51,28 @@ class Configs(object):
     activation = config[config_header]["activation"]
 
 
-# %%
 model_configs = Configs()
 model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
-
-# Instantiate the model:
-
-# print('parameter number is {}'.format(sum(p.numel()
-#       for p in model.parameters())))
-# enc = torch.randn([3, 168, 12])
-# enc_mark = torch.randn([3, 168, 4])
-
-# dec = torch.randn([3, 60, 12])
-# dec_mark = torch.randn([3, 60, 4])
-# out = model.forward(enc, enc_mark, dec, dec_mark)
-# print(out)
 # %%
 # print the model structure
 print("Model architecture:")
 print(model)
+
+# Instantiate the model:
+print('parameter number is {}'.format(sum(p.numel()
+      for p in model.parameters())))
+enc = torch.randn([3, 168, 12])
+enc_mark = torch.randn([3, 168, 4])
+
+dec = torch.randn([3, 60, 12])
+dec_mark = torch.randn([3, 60, 4])
+out = model.forward(enc, enc_mark, dec, dec_mark)
+print(out.shape)
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)
 
-
-print('parameter number is {}'.format(sum(p.numel()
-      for p in model.parameters())))
-enc = torch.randn([2, 168, 12])
-enc_mark = torch.randn([2, 168, 4])
-
-dec = torch.randn([2, 60, 12])
-dec_mark = torch.randn([2, 60, 4])
-out = model.forward(enc, enc_mark, dec, dec_mark)
-# print(out)
 # %%
 # read the configs
 config = configparser.ConfigParser()
@@ -212,6 +203,8 @@ for epoch in range(EPOCHS):
     for batch_x, batch_y, batch_x_mark, batch_y_mark in progress_bar:
         batch_x, batch_y, batch_x_mark, batch_y_mark = batch_x.to(DEVICE), batch_y.to(
             DEVICE), batch_x_mark.to(DEVICE), batch_y_mark.to(DEVICE)
+        # print(batch_x.shape, batch_y.shape,
+        #   batch_x_mark.shape, batch_y_mark.shape)
         optimizer.zero_grad()
         # decoder input
         dec_inp = torch.zeros_like(
@@ -220,12 +213,13 @@ for epoch in range(EPOCHS):
             [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
 
         outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-        # print(outputs.shape)
 
-        # outputs = outputs.squeeze()
-        # print(outputs.shape)
+        outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+        batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
+
+        outputs = outputs.squeeze()
         batch_y = batch_y.squeeze()
-        # print(batch_y.shape)
+
         # break
         loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
         loss.backward()
@@ -234,7 +228,6 @@ for epoch in range(EPOCHS):
     # break
     train_loss /= len(train_dataloader)
     train_results.append(train_loss)
-    # print("We are here:", train_loss)
 
     model.eval()
     val_loss = 0.0
@@ -250,14 +243,16 @@ for epoch in range(EPOCHS):
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            # outputs = outputs.squeeze()
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
+
+            outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
-            # if batch_y.shape[0] < BATCH_SIZE:
-            #     loss = criterion(outputs,
-            #                      batch_y[-model_configs.pred_len:])
-
-            loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
+            loss = criterion(outputs,
+                             batch_y[:, -model_configs.pred_len:])
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
         valid_results.append(val_loss)
@@ -279,7 +274,12 @@ for epoch in range(EPOCHS):
 
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            # outputs = outputs.squeeze()
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
+
+            outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
             # print(outputs.shape, batch_y.shape)
@@ -295,9 +295,9 @@ for epoch in range(EPOCHS):
         test_loss /= len(test_dataloader)
     test_results.append(test_loss)
     print('Time: {:5.2f}s | Train MSE: {:5.4f} | Val MSE: {:5.4f} | Test MSE: {:5.4f}'.format(
-        (time.time() - epoch_start_time), train_loss, test_loss, test_loss))
+        (time.time() - epoch_start_time), train_loss, val_loss, test_loss))
     # scheduler.step()
-    # optimizer_scheduler.step(val_loss)
+    optimizer_scheduler.step(val_loss)
 
 print("Best MSE:", "train:", min(train_results), "valid:",
       min(valid_results), "Test:", min(test_results))

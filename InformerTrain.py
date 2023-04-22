@@ -1,3 +1,4 @@
+# %%
 import random
 import configparser
 import numpy as np
@@ -12,6 +13,11 @@ from tqdm import tqdm
 from typing import Tuple
 random.seed(777)
 
+"""
+Informer performs multi-input multi-output prediction. 
+However, we are only interested in the predicted values of windspeed. 
+Therefore, we will evaluate the model's performance using multi-input single-output metrics.
+"""
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Running on:", DEVICE)
@@ -57,14 +63,26 @@ class Configs(object):
 model_configs = Configs()
 model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
-
+# %%
 # print the model structure
 print("Model architecture:")
 print(model)
+
+# Instantiate the model:
+print('parameter number is {}'.format(sum(p.numel()
+      for p in model.parameters())))
+enc = torch.randn([3, 168, 12])
+enc_mark = torch.randn([3, 168, 4])
+
+dec = torch.randn([3, 60, 12])
+dec_mark = torch.randn([3, 60, 4])
+out = model.forward(enc, enc_mark, dec, dec_mark)
+print(out.shape)
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)
 
+# %%
 # read the configs
 config = configparser.ConfigParser()
 config.read(os.path.join(here("config/training.cfg")))
@@ -204,12 +222,13 @@ for epoch in range(EPOCHS):
             [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
 
         outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-        # print(outputs.shape)
+
+        outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+        batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
 
         outputs = outputs.squeeze()
-        # print(outputs.shape)
         batch_y = batch_y.squeeze()
-        # print(batch_y.shape)
+
         # break
         loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
         loss.backward()
@@ -232,6 +251,12 @@ for epoch in range(EPOCHS):
             dec_inp = torch.cat(
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
+
             outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
@@ -257,6 +282,11 @@ for epoch in range(EPOCHS):
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
 
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
 
             outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()

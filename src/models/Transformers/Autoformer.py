@@ -80,11 +80,9 @@ class Model(nn.Module):
             norm_layer=my_Layernorm(configs.d_model),
             projection=nn.Linear(configs.d_model, configs.c_out, bias=True)
         )
-        self.output = nn.Linear(144, 12)
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
-        batch_size = x_enc.shape[0]
         # decomp init
         mean = torch.mean(x_enc, dim=1).unsqueeze(
             1).repeat(1, self.pred_len, 1)
@@ -106,12 +104,7 @@ class Model(nn.Module):
         # final
         dec_out = trend_part + seasonal_part
 
-        # if self.output_attention:
-        #     return dec_out[:, -self.pred_len:, :], attns
-        # else:
-        #     return dec_out[:, -self.pred_len:, :]
-
-        out = dec_out[:, -self.pred_len:, :]
-        out = out.reshape(batch_size, 144)
-        out = self.output(out)
-        return out
+        if self.output_attention:
+            return dec_out[:, -self.pred_len:, :], attns
+        else:
+            return dec_out[:, -self.pred_len:, :]

@@ -13,22 +13,17 @@ from tqdm import tqdm
 from typing import Tuple
 import json
 random.seed(777)
+
+"""
+Informer performs multi-input multi-output prediction. 
+However, we are only interested in the predicted values of windspeed. 
+Therefore, we will evaluate the model's performance using multi-input single-output metrics.
+"""
 # Set the device
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Running on:", DEVICE)
-"""
-Fedformer is modified by adding one linear layer at the end to predict univariate target.
-"""
 # Instantiate the model:
 
-# input:
-# enc = torch.randn([3, 168, 12])
-# enc_mark = torch.randn([3, 168, 4])
-# dec = torch.randn([3, 36, 1])
-# dec_mark = torch.randn([3, 36, 4])
-
-# output:
-# torch.Size([3, 36, 1])
 
 class Configs(object):
     config = configparser.ConfigParser()
@@ -72,20 +67,21 @@ model = torch.nn.DataParallel(model)
 # print the model structure
 print("Model architecture:")
 print(model)
+
+# Instantiate the model:
+print('parameter number is {}'.format(sum(p.numel()
+      for p in model.parameters())))
+enc = torch.randn([3, 168, 12])
+enc_mark = torch.randn([3, 168, 4])
+
+dec = torch.randn([3, 60, 12])
+dec_mark = torch.randn([3, 60, 4])
+out = model.forward(enc, enc_mark, dec, dec_mark)
+print(out.shape)
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)
 
-
-print('parameter number is {}'.format(sum(p.numel()
-      for p in model.parameters())))
-enc = torch.randn([2, 168, 12])
-enc_mark = torch.randn([2, 168, 4])
-
-dec = torch.randn([2, 60, 12])
-dec_mark = torch.randn([2, 60, 4])
-out = model.forward(enc, enc_mark, dec, dec_mark)
-# print(out)
 # %%
 # read the configs
 config = configparser.ConfigParser()
@@ -226,12 +222,13 @@ for epoch in range(EPOCHS):
             [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
 
         outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-        # print(outputs.shape)
 
-        # outputs = outputs.squeeze()
-        # print(outputs.shape)
+        outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+        batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
+
+        outputs = outputs.squeeze()
         batch_y = batch_y.squeeze()
-        # print(batch_y.shape)
+
         # break
         loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
         loss.backward()
@@ -254,7 +251,13 @@ for epoch in range(EPOCHS):
             dec_inp = torch.cat(
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-            # outputs = outputs.squeeze()
+
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
+
+            outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
             loss = criterion(outputs,
@@ -280,7 +283,12 @@ for epoch in range(EPOCHS):
 
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            # outputs = outputs.squeeze()
+            # Getting the first feature (windspeed)
+            outputs = outputs[:, 0:1, :]
+            # Getting the first feature (windspeed)
+            batch_y = batch_y[:, 0:1, :]
+
+            outputs = outputs.squeeze()
             batch_y = batch_y.squeeze()
 
             # print(outputs.shape, batch_y.shape)
