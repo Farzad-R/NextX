@@ -2,12 +2,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from layers.Embed import DataEmbedding, DataEmbedding_wo_pos
-from layers.AutoCorrelation import AutoCorrelation, AutoCorrelationLayer
-from layers.FourierCorrelation import FourierBlock, FourierCrossAttention
-from layers.MultiWaveletCorrelation import MultiWaveletCross, MultiWaveletTransform
-from layers.SelfAttention_Family import FullAttention, ProbAttention
-from layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, my_Layernorm, series_decomp, series_decomp_multi
+from src.models.Transformers.layers.Embed import DataEmbedding, DataEmbedding_wo_pos
+from src.models.Transformers.layers.AutoCorrelation import AutoCorrelation, AutoCorrelationLayer
+from src.models.Transformers.layers.FourierCorrelation import FourierBlock, FourierCrossAttention
+from src.models.Transformers.layers.MultiWaveletCorrelation import MultiWaveletCross, MultiWaveletTransform
+from src.models.Transformers.layers.SelfAttention_Family import FullAttention, ProbAttention
+from src.models.Transformers.layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, my_Layernorm, series_decomp, series_decomp_multi
 import math
 import numpy as np
 
@@ -179,10 +179,10 @@ class Configs(object):
     c_out = 7
     activation = 'gelu'
     wavelet = 0
-
+configs = Configs()
 
 # %%
-configs = Configs()
+
 model = Model(configs)
 # %%
 print('parameter number is {}'.format(sum(p.numel()

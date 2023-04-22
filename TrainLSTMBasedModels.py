@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 import time
 import os
 from src.utils.EarlyStopping import EarlyStopper
-from src.models.univariate.LSTMBased import VanillaLSTM, LSTMDENSE, LSTMAutoEncoder
+from src.models.LSTMBased.Benchmarks import VanillaLSTM, LSTMDENSE, LSTMAutoEncoder
 from tqdm import tqdm
 from typing import Tuple
 random.seed(777)

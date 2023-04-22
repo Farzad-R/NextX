@@ -11,8 +11,8 @@ from einops import rearrange, reduce, repeat
 from torch import nn, einsum, diagonal
 from math import log2, ceil
 import pdb
-from layers.masking import LocalMask
-from layers.utils import get_filter
+from src.models.Transformers.layers.masking import LocalMask
+from src.models.Transformers.layers.utils import get_filter
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

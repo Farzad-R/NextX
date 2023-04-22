@@ -102,6 +102,11 @@ def prepare_transformer_dataset():
         length=length, data_x=data_x, data_y=data_y, data_stamp=data_stamp,
         seq_len=WINDOWSIZE, label_len=LABEL_LEN, pred_len=HORIZON)
 
+    seq_x = seq_x.astype(np.float32)
+    seq_y = seq_y.astype(np.float32)
+    seq_x_mark = seq_x_mark.astype(np.float32)
+    seq_y_mark = seq_y_mark.astype(np.float32)
+
     del (data_x, data_y, data_stamp)
 
     print('seq_x shape', seq_x.shape, 'seq_y shape', seq_y.shape,

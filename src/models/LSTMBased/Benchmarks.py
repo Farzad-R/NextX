@@ -38,6 +38,11 @@ class LSTMDENSE(nn.Module):
         out = nn.functional.relu(out)
         out = self.fc2(out)
         return out
+
+# x = torch.randn(3, 158, 18)
+# model = LSTMDENSE()
+# out = model(x)
+
 # %% LSTMAutoEncoder
 
 

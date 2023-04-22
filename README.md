@@ -40,20 +40,24 @@ I will implement some custom models as well as some well-known published models 
 - [x] [VanillaLSTM](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [LSTMDENSE](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [LSTMAutoEncoder](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
+- [x] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
 - [] CNNLSTM: Custom design
 - [] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
-- [] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
 - [] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
 - [] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
-- [] [Tranformer](https://arxiv.org/abs/1706.03762) (Advances in neural information processing systems 2107)
+- [] [Tranformer](https://arxiv.org/abs/1706.03762) (Advances in neural information processing systems 2017)
 
 ## Comparison of different models
+I will arrange the models in descending order of performance, with the top model having the lowest mean squared error (MSE) and the subsequent models having progressively higher MSEs.
+
 <!-- We provide all experiment script files in `./scripts`: -->
-| Model          | TEST MSE            | Number of parameters   | Number of epochs        | AVG epoch time (s)     |
-| ---------------| --------------------| -----------------------| ------------------------| -----------------------|
-| VanillaLSTM    | 0.0117              |128,364                 | 52                      | 35.0                   |
-| LSTMDENSE      | 0.0119              |137,932                 | 34                      | 35.0                   |
-| LSTMAutoEncoder| 0.0119              |305,662                 | 44                      | 37.0                   |
+| Model             | TEST MSE              | Number of parameters      | Number of epochs          | AVG epoch time (s)     |
+| ---------------   | --------------------  | -----------------------   | ------------------------  | -----------------------|
+| VanillaLSTM       | 0.0117                |128,364                    | 52                        | 35.0                   |
+| LSTMDENSE         | 0.0119                |137,932                    | 34                        | 35.0                   |
+| LSTMAutoEncoder   | 0.0119                |305,662                    | 44                        | 37.0                   |
+| Informer          | 0.0162                |1852033                    | 9                         | 470.0                  |
+
 
 ## Getting Started
 
@@ -134,6 +138,13 @@ Example:
 ```
 python trainLSTMBased.py
 ```
+
+# Acknowledgment
+I would like to express my gratitude to the authors of the models used in this project. With the exception of the custom design models, all other models were sourced from their corresponding repositories and only minor changes were made to adjust the models to this project. I acknowledge the authors for their significant contributions. The list of repositories used in this project is provided below:
+
+[FEDformer](https://github.com/MAZiqing/FEDformer)
+[Informer2020](https://github.com/zhouhaoyi/Informer2020)
+[LTSF-Linear](https://github.com/cure-lab/LTSF-Linear)
 
 
 

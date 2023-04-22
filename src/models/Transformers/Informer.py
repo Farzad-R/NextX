@@ -1,10 +1,11 @@
+# %%
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.masking import TriangularCausalMask, ProbMask
-from layers.Transformer_EncDec import Decoder, DecoderLayer, Encoder, EncoderLayer, ConvLayer
-from layers.SelfAttention_Family import FullAttention, ProbAttention, AttentionLayer
-from layers.Embed import DataEmbedding
+from src.models.Transformers.layers.masking import TriangularCausalMask, ProbMask
+from src.models.Transformers.layers.Transformer_EncDec import Decoder, DecoderLayer, Encoder, EncoderLayer, ConvLayer
+from src.models.Transformers.layers.SelfAttention_Family import FullAttention, ProbAttention, AttentionLayer
+from src.models.Transformers.layers.Embed import DataEmbedding
 import numpy as np
 
 
@@ -12,6 +13,7 @@ class Model(nn.Module):
     """
     Informer with Propspare attention in O(LlogL) complexity
     """
+
     def __init__(self, configs):
         super(Model, self).__init__()
         self.pred_len = configs.pred_len
@@ -49,10 +51,12 @@ class Model(nn.Module):
             [
                 DecoderLayer(
                     AttentionLayer(
-                        ProbAttention(True, configs.factor, attention_dropout=configs.dropout, output_attention=False),
+                        ProbAttention(
+                            True, configs.factor, attention_dropout=configs.dropout, output_attention=False),
                         configs.d_model, configs.n_heads),
                     AttentionLayer(
-                        ProbAttention(False, configs.factor, attention_dropout=configs.dropout, output_attention=False),
+                        ProbAttention(
+                            False, configs.factor, attention_dropout=configs.dropout, output_attention=False),
                         configs.d_model, configs.n_heads),
                     configs.d_model,
                     configs.d_ff,
@@ -72,9 +76,53 @@ class Model(nn.Module):
         enc_out, attns = self.encoder(enc_out, attn_mask=enc_self_mask)
 
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
-        dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
+        dec_out = self.decoder(
+            dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
 
         if self.output_attention:
             return dec_out[:, -self.pred_len:, :], attns
         else:
-            return dec_out[:, -self.pred_len:, :]
+            out = dec_out[:, -self.pred_len:, :]
+        # print(out.shape)
+        return out
+
+# %%
+# class Configs(object):
+#     ab = 0
+#     seq_len = 168
+#     label_len = 24
+#     pred_len = 36
+#     output_attention = False
+#     enc_in = 12  # num features
+#     dec_in = 1
+#     d_model = 16
+#     embed = 'timeF'
+#     dropout = 0.05
+#     freq = 'h'
+#     factor = 1
+#     n_heads = 8
+#     d_ff = 16
+#     e_layers = 2
+#     d_layers = 1
+#     c_out = 1
+#     activation = 'gelu'
+#     distil = False
+
+
+# configs = Configs()
+# %%
+# model = Model(configs)
+
+# print('parameter number is {}'.format(sum(p.numel()
+#       for p in model.parameters())))
+# %%
+
+# enc = torch.randn([3, configs.seq_len, 12])
+# enc_mark = torch.randn([3, configs.seq_len, 4])
+
+# dec = torch.randn([3, 36, 1])
+# dec_mark = torch.randn([3, 36, 4])
+
+# out = model.forward(enc, enc_mark, dec, dec_mark)
+# print(out.shape)
+# %%
