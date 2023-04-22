@@ -42,10 +42,9 @@ I will implement some custom models as well as some well-known published models 
 - [x] [LSTMAutoEncoder](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
 - [x] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
-- [] CNNLSTM: Custom design
+- [x] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
 - [] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
-- [] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
-- [] [Tranformer](https://arxiv.org/abs/1706.03762) (Advances in neural information processing systems 2017)
+- [] CNNLSTM: Custom design
 
 ## Comparison of different models
 I will arrange the models in descending order of performance, with the top model having the lowest mean squared error (MSE) and the subsequent models having progressively higher MSEs.
