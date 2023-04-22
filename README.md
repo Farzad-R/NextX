@@ -142,9 +142,9 @@ python trainLSTMBased.py
 # Acknowledgment
 I would like to express my gratitude to the authors of the models used in this project. With the exception of the custom design models, all other models were sourced from their corresponding repositories and only minor changes were made to adjust the models to this project. I acknowledge the authors for their significant contributions. The list of repositories used in this project is provided below:
 
-[FEDformer](https://github.com/MAZiqing/FEDformer)
-[Informer2020](https://github.com/zhouhaoyi/Informer2020)
-[LTSF-Linear](https://github.com/cure-lab/LTSF-Linear)
+- [FEDformer](https://github.com/MAZiqing/FEDformer)
+- [Informer2020](https://github.com/zhouhaoyi/Informer2020)
+- [LTSF-Linear](https://github.com/cure-lab/LTSF-Linear)
 
 
 
