@@ -98,8 +98,7 @@ I will arrange the models in descending order of performance, with the top model
 ├── main.py                         # Entry point for the preprocesing pipeline
 ├── FEDformerTrain.py
 ├── InformerTrain.py
-├── 
-└── train.py                        # Entry point for the training pipeline
+└── AutoformerTrain.py
 ```
 ### Environment Requirements
 
