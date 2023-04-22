@@ -31,7 +31,7 @@ class Configs(object):
     config = configparser.ConfigParser()
     config.read(os.path.join(here("config/training.cfg")))
     config_header = "Informer"
-    ab = int(config["Informer"]["ab"])
+    ab = int(config[config_header]["ab"])
     seq_len = int(config[config_header]["seq_len"])  # windowsize or lookback
     # labeld samples attached to horizon
     label_len = int(config[config_header]["label_len"])

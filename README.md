@@ -41,22 +41,23 @@ I will implement some custom models as well as some well-known published models 
 - [x] [LSTMDENSE](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [LSTMAutoEncoder](https://github.com/Farzad-R/NextX/blob/main/src/models/univariate/LSTMBased.py): Custom design
 - [x] [Informer](https://arxiv.org/abs/2012.07436) (AAAI 2021 Best paper)
+- [x] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
 - [] CNNLSTM: Custom design
 - [] [Vanilla-Transformer](https://arxiv.org/abs/1706.03762) (NeuIPS 2017)
 - [] [Autoformer](https://arxiv.org/abs/2106.13008) (NeuIPS 2021)
-- [] [FEDformer](https://arxiv.org/abs/2201.12740) (ICML 2022)
 - [] [Tranformer](https://arxiv.org/abs/1706.03762) (Advances in neural information processing systems 2017)
 
 ## Comparison of different models
 I will arrange the models in descending order of performance, with the top model having the lowest mean squared error (MSE) and the subsequent models having progressively higher MSEs.
 
 <!-- We provide all experiment script files in `./scripts`: -->
-| Model             | TEST MSE              | Number of parameters      | Number of epochs          | AVG epoch time (s)     |
-| ---------------   | --------------------  | -----------------------   | ------------------------  | -----------------------|
-| VanillaLSTM       | 0.0117                |128,364                    | 52                        | 35.0                   |
-| LSTMDENSE         | 0.0119                |137,932                    | 34                        | 35.0                   |
-| LSTMAutoEncoder   | 0.0119                |305,662                    | 44                        | 37.0                   |
-| Informer          | 0.0162                |1852033                    | 9                         | 470.0                  |
+| Model                 | TEST MSE              | Number of parameters      | Number of epochs          | AVG epoch time (s)     |
+| ---------------       | --------------------  | -----------------------   | ------------------------  | -----------------------|
+| VanillaLSTM           | 0.0117                |128,364                    | 52                        | 35.0                   |
+| LSTMDENSE             | 0.0119                |137,932                    | 34                        | 35.0                   |
+| LSTMAutoEncoder       | 0.0119                |305,662                    | 44                        | 37.0                   |
+| Informer              | 0.0162                |1,852,033                  | 9                         | 470.0                  |
+| FEDformer(Wavelet)    | Not enough GPU        |100,785,984                | _                         | _                      |
 
 
 ## Getting Started
@@ -77,14 +78,14 @@ I will arrange the models in descending order of performance, with the top model
 │
 ├── src                             # Contains the codes of the main pipeline
 │   ├── utils                       # Includes utils.py module
-│   │   ├── EarlyStopping.py
-│   │   └── utils.py.csv
+│   │
 │   ├── clean
-│   │   └── CleanWTH.py
+│   │
 │   ├── dataprep
 │   └── models
-│       └── univariate
-│           └── LSTMbased.py
+│       ├── Linear
+│       ├── LSTMBased
+│       └── Transformers
 │
 ├── logs                    
 │   ├── debug.log               
