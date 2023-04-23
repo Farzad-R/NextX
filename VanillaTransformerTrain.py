@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 import time
 import os
 from src.utils.EarlyStopping import EarlyStopper
-from src.models.Transformers.Informer import Model
+from src.models.Transformers.Transformer import Model
 from tqdm import tqdm
 from typing import Tuple
 random.seed(777)
@@ -23,28 +23,19 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Running on:", DEVICE)
 # Instantiate the model:
 
-# input:
-# enc = torch.randn([3, 168, 12])
-# enc_mark = torch.randn([3, 168, 4])
-# dec = torch.randn([3, 36, 1])
-# dec_mark = torch.randn([3, 36, 4])
-
-# output:
-# torch.Size([3, 36, 1])
-
 
 class Configs(object):
     config = configparser.ConfigParser()
     config.read(os.path.join(here("config/training.cfg")))
-    config_header = "Informer"
-    ab = int(config[config_header]["ab"])
+    config_header = "Transformer"
     seq_len = int(config[config_header]["seq_len"])  # windowsize or lookback
     # labeld samples attached to horizon
     label_len = int(config[config_header]["label_len"])
     pred_len = int(config[config_header]["pred_len"])  # horizon
     output_attention = config.getboolean(config_header, 'output_attention')
     enc_in = int(config[config_header]["enc_in"])  # num input features
-    dec_in = int(config[config_header]["dec_in"])  # number of output targets
+    # should be the same as enc in
+    dec_in = int(config[config_header]["dec_in"])
     d_model = int(config[config_header]["d_model"])  # 16
     embed = config[config_header]["embed"]
     dropout = float(config[config_header]["dropout"])
@@ -57,9 +48,6 @@ class Configs(object):
     c_out = int(config[config_header]["c_out"])  # number of output features
     # 1 means univariate prediction
     activation = config[config_header]["activation"]
-    distil = config.getboolean(config_header, 'distil')
-# As the natural consequence of the ProbSparse self-attention mechanism, the encoder’s feature map has redundant combinations of value V. We use
-# the distilling operation to privilege the superior ones with dominating features and make a focused self-attention feature map in the next layer.
 
 
 model_configs = Configs()
@@ -203,7 +191,6 @@ print("Starting to train...")
 test_results = []
 train_results = []
 valid_results = []
-best_val_loss = float(0.0110)
 for epoch in range(EPOCHS):
     iter_count = 0
     model.train()
@@ -268,10 +255,6 @@ for epoch in range(EPOCHS):
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
         valid_results.append(val_loss)
-    if val_loss < best_val_loss:
-        torch.save(model.state_dict(), 'model/informer.pt')
-        best_val_loss = val_loss
-        print("Model is saved.")
     if early_stopper.early_stop(val_loss):
         print("Early stopping due to no improvement in val_loss.")
         break
