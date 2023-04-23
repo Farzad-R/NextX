@@ -58,19 +58,19 @@ model = torch.nn.DataParallel(model)
 print("Model architecture:")
 print(model)
 
-# Instantiate the model:
-print('parameter number is {}'.format(sum(p.numel()
-      for p in model.parameters())))
-enc = torch.randn([3, 168, 12])
-enc_mark = torch.randn([3, 168, 4])
+# # Instantiate the model:
+# print('parameter number is {}'.format(sum(p.numel()
+#       for p in model.parameters())))
+# enc = torch.randn([3, 168, 12])
+# enc_mark = torch.randn([3, 168, 4])
 
-dec = torch.randn([3, 60, 12])
-dec_mark = torch.randn([3, 60, 4])
-out = model.forward(enc, enc_mark, dec, dec_mark)
-print(out.shape)
-# count the number of parameters
-num_params = sum(p.numel() for p in model.parameters())
-print("Number of parameters in the model:", num_params)
+# dec = torch.randn([3, 60, 12])
+# dec_mark = torch.randn([3, 60, 4])
+# out = model.forward(enc, enc_mark, dec, dec_mark)
+# print(out.shape)
+# # count the number of parameters
+# num_params = sum(p.numel() for p in model.parameters())
+# print("Number of parameters in the model:", num_params)
 
 # %%
 # read the configs
