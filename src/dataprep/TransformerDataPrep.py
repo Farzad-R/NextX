@@ -65,21 +65,21 @@ def prepare_transformer_dataset():
     df = pd.read_parquet(WEATHER_DIR)
     df = normalize_df(df)  # Normalize the dataframe
     df = df.reset_index()
+    df['date'] = pd.to_datetime(df['date'])
+    df_stamp = df[['date']]
     # separate target to be able to perform MV input, Univariate output
-    
 
     cols_data = df.columns[1:]  # Select all columns except date
     df_data = df[cols_data]  # take all the columns axcept date
-    windspeed = df.pop(TARGET) # remove the 'windspeed' column
-    df.insert(0, TARGET, windspeed) # insert the 'windspeed' column at the first position
+    windspeed = df_data.pop(TARGET)  # remove the 'windspeed' column
+    # insert the 'windspeed' column at the first position
+    df_data.insert(0, TARGET, windspeed)
     data_x = df_data.values  # convert to numpy
     # df_y = df[[TARGET]]
     data_y = df_data.values
     print("data_x shape:", data_x.shape)
     print("data_y shape:", data_x.shape)
 
-    df_stamp = df[['date']]
-    df['date'] = pd.to_datetime(df['date'])
     print("df_stamp shape", df_stamp.shape)
     if TIME_ENC == 0:
         # First approach: compute 4 time related features and return a numpy array
