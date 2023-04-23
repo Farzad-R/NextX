@@ -68,16 +68,16 @@ model = torch.nn.DataParallel(model)
 print("Model architecture:")
 print(model)
 
-# Instantiate the model:
-print('parameter number is {}'.format(sum(p.numel()
-      for p in model.parameters())))
-enc = torch.randn([3, 168, 12])
-enc_mark = torch.randn([3, 168, 4])
+# # Instantiate the model:
+# print('parameter number is {}'.format(sum(p.numel()
+#       for p in model.parameters())))
+# enc = torch.randn([3, 168, 12])
+# enc_mark = torch.randn([3, 168, 4])
 
-dec = torch.randn([3, 60, 12])
-dec_mark = torch.randn([3, 60, 4])
-out = model.forward(enc, enc_mark, dec, dec_mark)
-print(out.shape)
+# dec = torch.randn([3, 60, 12])
+# dec_mark = torch.randn([3, 60, 4])
+# out = model.forward(enc, enc_mark, dec, dec_mark)
+# print(out.shape)
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)
@@ -201,6 +201,7 @@ print("Starting to train...")
 test_results = []
 train_results = []
 valid_results = []
+best_val_loss = float(0.005)
 for epoch in range(EPOCHS):
     iter_count = 0
     model.train()
@@ -265,6 +266,11 @@ for epoch in range(EPOCHS):
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
         valid_results.append(val_loss)
+    
+    if val_loss < best_val_loss:
+        torch.save(model.state_dict(), 'model/FEDformer.pt')
+        best_val_loss = val_loss
+        print("Model is saved.")
     if early_stopper.early_stop(val_loss):
         print("Early stopping due to no improvement in val_loss.")
         break
