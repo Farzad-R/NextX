@@ -55,7 +55,7 @@ I will arrange the models in descending order of performance, with the top model
 | LSTMDENSE             | 0.0119                |137,932                    | 34                        | TBD                    |
 | LSTMAutoEncoder       | 0.0119                |305,662                    | 44                        | TBD                    |
 | Informer              | 0.0143                |673,420                    | 47                        | 15.5                   |
-| Autoformer            | 0.0144                |45,736                     | 38                        | 26.0                   |
+| Autoformer            | 0.0144                |674,344                    | 38                        | 26.0                   |
 | VanillaTransformer    | 0.0158                |45,484                     | 55                        | 13.8                   |
 | FEDformer(Wavelet)    | TBD                   |100,785,984                | TBD                       | TBD                    |
 
