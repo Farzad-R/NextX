@@ -24,6 +24,13 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Running on:", DEVICE)
 # Instantiate the model:
 
+
+def get_the_target(tensor):
+    last_12_values = tensor[:, -12:, :]
+    first_column = last_12_values[:, :, 0:1]
+    return first_column.squeeze()
+
+
 class Configs(object):
     config = configparser.ConfigParser()
     config.read(os.path.join(here("config/training.cfg")))
@@ -214,14 +221,18 @@ for epoch in range(EPOCHS):
 
         outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-        outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
-        batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
+        y_pred = get_the_target(outputs)
+        y_true = get_the_target(batch_y)
 
-        outputs = outputs.squeeze()
-        batch_y = batch_y.squeeze()
+        # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+        # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
+
+        # outputs = outputs.squeeze()
+        # batch_y = batch_y.squeeze()
 
         # break
-        loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
+        # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
+        loss = criterion(y_pred, y_true)
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
@@ -243,16 +254,18 @@ for epoch in range(EPOCHS):
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            # Getting the first feature (windspeed)
-            outputs = outputs[:, 0:1, :]
-            # Getting the first feature (windspeed)
-            batch_y = batch_y[:, 0:1, :]
+            y_pred = get_the_target(outputs)
+            y_true = get_the_target(batch_y)
 
-            outputs = outputs.squeeze()
-            batch_y = batch_y.squeeze()
+            # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+            # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
 
-            loss = criterion(outputs,
-                             batch_y[:, -model_configs.pred_len:])
+            # outputs = outputs.squeeze()
+            # batch_y = batch_y.squeeze()
+
+            # break
+            # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
+            loss = criterion(y_pred, y_true)
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
         valid_results.append(val_loss)
@@ -274,22 +287,25 @@ for epoch in range(EPOCHS):
 
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            # Getting the first feature (windspeed)
-            outputs = outputs[:, 0:1, :]
-            # Getting the first feature (windspeed)
-            batch_y = batch_y[:, 0:1, :]
+            y_pred = get_the_target(outputs)
+            y_true = get_the_target(batch_y)
 
-            outputs = outputs.squeeze()
-            batch_y = batch_y.squeeze()
+            # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
+            # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
 
-            # print(outputs.shape, batch_y.shape)
-            # handle the last batch separately
-            if batch_y.shape[0] < BATCH_SIZE:
-                loss = criterion(outputs,
-                                 batch_y[-model_configs.pred_len:])
-            else:
-                loss = criterion(outputs,
-                                 batch_y[:, -model_configs.pred_len:])
+            # outputs = outputs.squeeze()
+            # batch_y = batch_y.squeeze()
+
+            # break
+            # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
+            loss = criterion(y_pred, y_true)
+            # # handle the last batch separately
+            # if batch_y.shape[0] < BATCH_SIZE:
+            #     loss = criterion(outputs,
+            #                      batch_y[-model_configs.pred_len:])
+            # else:
+            #     loss = criterion(outputs,
+            #                      batch_y[:, -model_configs.pred_len:])
             test_loss += loss.item()
 
         test_loss /= len(test_dataloader)
