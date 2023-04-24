@@ -73,8 +73,8 @@ model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
 # %%
 # print the model structure
-print("Model architecture:")
-print(model)
+# print("Model architecture:")
+# print(model)
 
 # # Instantiate the model:
 # print('parameter number is {}'.format(sum(p.numel()
@@ -87,8 +87,8 @@ print(model)
 # out = model.forward(enc, enc_mark, dec, dec_mark)
 # print(out.shape)
 # # count the number of parameters
-# num_params = sum(p.numel() for p in model.parameters())
-# print("Number of parameters in the model:", num_params)
+num_params = sum(p.numel() for p in model.parameters())
+print("Number of parameters in the model:", num_params)
 
 # %%
 # read the configs

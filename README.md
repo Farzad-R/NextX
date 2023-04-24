@@ -52,12 +52,12 @@ I will arrange the models in descending order of performance, with the top model
 <!-- We provide all experiment script files in `./scripts`: -->
 | Model                 | TEST MSE              | Number of parameters      | Number of epochs          | AVG epoch time (s)     |
 | ---------------       | --------------------  | -----------------------   | ------------------------  | -----------------------|
-| VanillaTransformer    | 0.0010                |45,484                     | 276                       | 14.0                   |
 | Informer              | 0.0086                |1,857,676                  | 106                       | 20.5                   |
 | VanillaLSTM           | 0.0117                |128,364                    | 52                        | TBD                    |
 | LSTMDENSE             | 0.0119                |137,932                    | 34                        | TBD                    |
 | LSTMAutoEncoder       | 0.0119                |305,662                    | 44                        | TBD                    |
 | Autoformer            | 0.0144                |45,736                     | 155                       | 29.0                   |
+| VanillaTransformer    | 0.0162                |45,484                     | 276                       | 15.5                   |
 | FEDformer(Wavelet)    | TBD                   |100,785,984                | TBD                       | TBD                    |
 
 

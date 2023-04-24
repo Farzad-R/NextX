@@ -25,8 +25,8 @@ print("Running on:", DEVICE)
 # Instantiate the model:
 
 
-def get_the_target(tensor):
-    last_12_values = tensor[:, -12:, :]
+def get_the_target(tensor, pred_len=12):
+    last_12_values = tensor[:, -pred_len:, :]
     first_column = last_12_values[:, :, 0:1]
     return first_column.squeeze()
 
@@ -63,19 +63,19 @@ model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
 # %%
 # print the model structure
-print("Model architecture:")
-print(model)
+# print("Model architecture:")
+# print(model)
 
 # Instantiate the model:
-print('parameter number is {}'.format(sum(p.numel()
-      for p in model.parameters())))
-enc = torch.randn([3, 168, 12])
-enc_mark = torch.randn([3, 168, 4])
+# print('parameter number is {}'.format(sum(p.numel()
+#       for p in model.parameters())))
+# enc = torch.randn([3, 168, 12])
+# enc_mark = torch.randn([3, 168, 4])
 
-dec = torch.randn([3, 60, 12])
-dec_mark = torch.randn([3, 60, 4])
-out = model.forward(enc, enc_mark, dec, dec_mark)
-print(out.shape)
+# dec = torch.randn([3, 60, 12])
+# dec_mark = torch.randn([3, 60, 4])
+# out = model.forward(enc, enc_mark, dec, dec_mark)
+# print(out.shape)
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)

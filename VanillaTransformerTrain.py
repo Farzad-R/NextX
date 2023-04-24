@@ -60,8 +60,8 @@ model = Model(model_configs).to(DEVICE)
 model = torch.nn.DataParallel(model)
 # %%
 # print the model structure
-print("Model architecture:")
-print(model)
+# print("Model architecture:")
+# print(model)
 
 # # Instantiate the model:
 print('parameter number is {}'.format(sum(p.numel()
