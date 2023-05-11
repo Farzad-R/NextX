@@ -2,7 +2,7 @@ import argparse
 from src.clean.CleanWTH import clean_wth
 from src.dataprep.PrepareTarget import prepare_target
 from src.dataprep.PrepareFeat import prepare_features
-from src.dataprep.PrepareTimeFeatures import prepare_time_features
+from banned.PrepareTimeFeatures import prepare_time_features
 from src.dataprep.TransformerDataPrep import prepare_transformer_dataset
 
 import src.config
