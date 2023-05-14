@@ -130,6 +130,39 @@ class DataEmbedding_onlypos(nn.Module):
         return self.dropout(x)
     
 class DataEmbedding_wo_pos(nn.Module):
+    """
+    This code defines a PyTorch module called DataEmbedding_wo_pos that is used to embed a data tensor and a time tensor. 
+    The embedding process is performed without adding any positional information to the data tensor, hence the name 
+    wo_pos (short for "without position").
+
+    The module takes the following parameters:
+
+    - c_in: an integer that represents the number of input channels (or features) of the data tensor.
+
+    - d_model: an integer that represents the dimensionality of the output embedding vectors.
+
+    - embed_type: a string that specifies the type of temporal embedding to use. This can be one of 'fixed', 'sin', 'cos', 
+    'timeF' (short for "time feature").
+
+    - freq: a string that specifies the frequency of the time tensor. This can be one of 'h' (for hourly frequency), 'd' 
+    (for daily frequency), 'b' (for business day frequency), 'w' (for weekly frequency), 'm' (for monthly frequency), or 
+    'q' (for quarterly frequency).
+
+    - dropout: a float that represents the dropout rate to use.
+
+    The module has three sub-modules:
+
+    - value_embedding: an instance of the TokenEmbedding module that embeds the data tensor.
+
+    - position_embedding: an instance of the PositionalEmbedding module that adds positional information to the embedding 
+    vectors.
+
+    - temporal_embedding: an instance of the TemporalEmbedding or TimeFeatureEmbedding module that embeds the time tensor 
+    based on the specified embedding type and frequency.
+
+    The forward method takes two input tensors x and x_mark, where x is the data tensor and x_mark is the time tensor. 
+    The method embeds the two input tensors and returns the result with dropout applied.
+    """
     def __init__(self, c_in, d_model, embed_type='fixed', freq='h', dropout=0.1):
         super(DataEmbedding_wo_pos, self).__init__()
 

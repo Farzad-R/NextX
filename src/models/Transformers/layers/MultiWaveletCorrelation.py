@@ -19,7 +19,26 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class MultiWaveletTransform(nn.Module):
     """
-    1D multiwavelet block.
+    1D multiwavelet block. It is used for feature extraction in time series data.
+
+    The __init__ method initializes the hyperparameters of the multiwavelet block. ich specifies the number 
+    of input channels. k and c control the size of the transformed features. alpha controls the wavelet 
+    coefficients. nCZ specifies the number of cascade blocks used in the Continuous Wavelet Transform. L is 
+    the number of discrete scales. base specifies the type of wavelet to use.
+
+    queries, keys, and values are 4-dimensional tensors with shape (batch_size, sequence_length, hidden_size, 
+    embeddings) for queries and keys, and (batch_size, sequence_length, num_channels, embeddings) for values.
+
+    The forward pass first checks the lengths of the queries and values tensors, and pads the values tensor 
+    with zeros if the length of queries is longer than the length of values. It then applies a linear 
+    transformation to the values tensor with a weight matrix Lk0 that maps the tensor from shape (batch_size, 
+    sequence_length, num_channels, embeddings) to (batch_size, sequence_length, c*k) where c and k are integer 
+    parameters. The tensor is then reshaped to shape (batch_size, sequence_length, c, k) and fed into nCZ 
+    modules of the MWT_CZ1d class. These modules apply the multiwavelet transform and non-linear activations. 
+    The output of the MWT_CZ1d module is then reshaped back to shape (batch_size, sequence_length, c*k), and 
+    another linear transformation Lk1 is applied to map the tensor back to shape (batch_size, sequence_length, 
+    num_channels, embeddings). The output of the block is a tuple containing the transformed values tensor and 
+    None for the attention weights.
     """
 
     def __init__(self, ich=1, k=8, alpha=16, c=128,
@@ -62,6 +81,29 @@ class MultiWaveletTransform(nn.Module):
 class MultiWaveletCross(nn.Module):
     """
     1D Multiwavelet Cross Attention layer.
+
+    implementation of a 1D Multiwavelet Cross Attention layer. It extends the Fourier Cross Attention layer, 
+    which is a type of attention mechanism that employs the discrete Fourier transform (DFT) to capture the 
+    correlations between different positions in a sequence. In the Multiwavelet Cross Attention layer, the 
+    Fourier Cross Attention is applied to the coefficients of the wavelet transform of the input sequence.
+
+    The input to the layer is a tensor of shape (B, N, H, E), where B is the batch size, N is the sequence length,
+    H is the number of attention heads, and E is the embedding size. The output is also a tensor of the same shape.
+    The layer computes the queries, keys, and values of the attention mechanism using linear transformations of the
+    input tensor. It then applies the Fourier Cross Attention to these queries, keys, and values, producing a tensor
+    of attention outputs. Finally, a linear transformation is applied to the attention outputs to produce the final
+    output tensor.
+
+    The layer also performs some preprocessing on the input sequence before applying the attention mechanism. It first
+    reshapes the input tensor to a tensor of shape (B, N, HE), and then applies linear transformations to the input tensor
+    to produce the queries, keys, and values for the attention mechanism. It also pads the input sequence with zeros and
+    applies the wavelet transform to the resulting padded sequence to obtain the wavelet coefficients. These coefficients
+    are used as the input to the Fourier Cross Attention.
+
+    The layer has several hyperparameters, including the number of attention modes, the number of wavelet scales, the type of
+    wavelet used, and the activation function used in the attention mechanism. It also has several trainable parameters, including
+    the weights of the linear transformations used to compute the queries, keys, and values, and the weights of the linear
+    transformations used to produce the final output tensor.
     """
 
     def __init__(self, in_channels, out_channels, seq_len_q, seq_len_kv, modes, c=64,
@@ -213,6 +255,33 @@ class MultiWaveletCross(nn.Module):
 
 
 class FourierCrossAttentionW(nn.Module):
+    """
+    Fourier Cross Attention with learnable weights. 
+
+    The constructor takes several arguments:
+    - in_channels and out_channels: the number of input and output channels of the module.
+    - seq_len_q and seq_len_kv: the sequence lengths of the query and key/value inputs.
+    - modes: the number of Fourier modes to use.
+    - activation: the activation function to apply to the Fourier coefficients. This can be either 'tanh' or 'softmax'.
+    - mode_select_method: the method for selecting the Fourier modes. This can be either 'random' or 'top'.
+
+    The forward method takes four inputs:
+    - q, k, v: the query, key, and value inputs.
+    - mask: the attention mask to apply.
+
+    *The method first permutes the input tensors to the shape [B, H, E, L], where B is the batch size, H is the number of heads, 
+    E is the embedding size, and L is the sequence length.
+    *It then computes the Fourier transform of the query and key tensors along the sequence dimension.
+    *It selects a subset of the Fourier coefficients based on the specified number of modes.
+    *It computes the Fourier cross-correlation of the query and key tensors using the selected Fourier coefficients, applies an 
+    activation function (either tanh or softmax), and computes the Fourier transform of the resulting tensor using the full set of key Fourier coefficients.
+    *It selects a subset of the resulting Fourier coefficients based on the selected query Fourier coefficients.
+    *It computes the inverse Fourier transform of the resulting Fourier coefficients and permutes the result back to the shape [B, L, H, E].
+
+    The method returns the output tensor and None for the attention weights.
+
+
+    """
     def __init__(self, in_channels, out_channels, seq_len_q, seq_len_kv, modes=16, activation='tanh',
                  mode_select_method='random'):
         super(FourierCrossAttentionW, self).__init__()

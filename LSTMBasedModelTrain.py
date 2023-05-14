@@ -108,7 +108,6 @@ class NumpyDataset(Dataset):
         x_Feat = np.copy(self.x_Feat[idx])
         x_hist_time = np.copy(self.x_hist_time[idx])
         x = np.concatenate([x, x_Feat, x_hist_time], axis=-1)
-
         # x_fut_time = np.load(self.fut_time_path, mmap_mode='r')[idx]
         # Labels
         y = np.copy(np.load(self.y_path, mmap_mode='r')[idx])

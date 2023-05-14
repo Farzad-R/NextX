@@ -72,8 +72,13 @@ model = torch.nn.DataParallel(model)
 # print the model structure
 print("Model architecture:")
 print(model)
+# Build the model with a sample data 
 
-# # Instantiate the model:
+# print the model structure
+# print("Model architecture:")
+# print(model)
+
+# Instantiate the model:
 # print('parameter number is {}'.format(sum(p.numel()
 #       for p in model.parameters())))
 # enc = torch.randn([3, 168, 12])
@@ -83,6 +88,7 @@ print(model)
 # dec_mark = torch.randn([3, 60, 4])
 # out = model.forward(enc, enc_mark, dec, dec_mark)
 # print(out.shape)
+#%%
 # count the number of parameters
 num_params = sum(p.numel() for p in model.parameters())
 print("Number of parameters in the model:", num_params)
@@ -218,8 +224,6 @@ for epoch in range(EPOCHS):
     for batch_x, batch_y, batch_x_mark, batch_y_mark in progress_bar:
         batch_x, batch_y, batch_x_mark, batch_y_mark = batch_x.to(DEVICE), batch_y.to(
             DEVICE), batch_x_mark.to(DEVICE), batch_y_mark.to(DEVICE)
-        # print(batch_x.shape, batch_y.shape,
-        #   batch_x_mark.shape, batch_y_mark.shape)
         optimizer.zero_grad()
         # decoder input
         dec_inp = torch.zeros_like(
@@ -228,18 +232,8 @@ for epoch in range(EPOCHS):
             [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
 
         outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-
         y_pred = get_the_target(outputs)
         y_true = get_the_target(batch_y)
-
-        # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
-        # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
-
-        # outputs = outputs.squeeze()
-        # batch_y = batch_y.squeeze()
-
-        # break
-        # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
         loss = criterion(y_pred, y_true)
         loss.backward()
         optimizer.step()
@@ -254,25 +248,14 @@ for epoch in range(EPOCHS):
         for batch_x, batch_y, batch_x_mark, batch_y_mark in validation_dataloader:
             batch_x, batch_y, batch_x_mark, batch_y_mark = batch_x.to(DEVICE), batch_y.to(
                 DEVICE), batch_x_mark.to(DEVICE), batch_y_mark.to(DEVICE)
-
             # decoder input
             dec_inp = torch.zeros_like(
                 batch_y[:, -model_configs.pred_len:, :]).float()
             dec_inp = torch.cat(
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-
             y_pred = get_the_target(outputs)
             y_true = get_the_target(batch_y)
-
-            # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
-            # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
-
-            # outputs = outputs.squeeze()
-            # batch_y = batch_y.squeeze()
-
-            # break
-            # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
             loss = criterion(y_pred, y_true)
             val_loss += loss.item()
         val_loss /= len(validation_dataloader)
@@ -291,33 +274,15 @@ for epoch in range(EPOCHS):
         for batch_x, batch_y, batch_x_mark, batch_y_mark in test_dataloader:
             batch_x, batch_y, batch_x_mark, batch_y_mark = batch_x.to(DEVICE), batch_y.to(
                 DEVICE), batch_x_mark.to(DEVICE), batch_y_mark.to(DEVICE)
-
             # decoder input
             dec_inp = torch.zeros_like(
                 batch_y[:, -model_configs.pred_len:, :]).float()
             dec_inp = torch.cat(
                 [batch_y[:, :model_configs.label_len, :], dec_inp], dim=1).float().to(DEVICE)
-
             outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-
             y_pred = get_the_target(outputs)
             y_true = get_the_target(batch_y)
-
-            # outputs = outputs[:, 0:1, :]  # Getting the first feature (windspeed)
-            # batch_y = batch_y[:, 0:1, :]  # Getting the first feature (windspeed)
-
-            # outputs = outputs.squeeze()
-            # batch_y = batch_y.squeeze()
-
-            # break
-            # loss = criterion(outputs, batch_y[:, -model_configs.pred_len:])
             loss = criterion(y_pred, y_true)
-            # if batch_y.shape[0] < BATCH_SIZE:
-            #     loss = criterion(outputs,
-            #                      batch_y[-model_configs.pred_len:])
-            # else:
-            #     loss = criterion(outputs,
-            #                      batch_y[:, -model_configs.pred_len:])
             test_loss += loss.item()
 
         test_loss /= len(test_dataloader)

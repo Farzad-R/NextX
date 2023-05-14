@@ -8,6 +8,22 @@ from src.models.Transformers.layers.SelfAttention_Family import FullAttention
 class my_Layernorm(nn.Module):
     """
     Special designed layernorm for the seasonal part
+
+    The constructor of this class takes an integer channels as input, which represents 
+    the number of channels in the input tensor. In the __init__ method, it initializes a 
+    LayerNorm instance with channels as the input size.
+
+    The forward method takes an input tensor x of shape (batch_size, sequence_length, channels)
+    and applies layer normalization on the last dimension of the input tensor using the LayerNorm
+    instance. The output of layer normalization is then subtracted by the mean along the second
+    dimension of the normalized tensor. The mean is calculated using the torch.mean function along
+    the second dimension, unsqueezed to add a new dimension, and repeated along the second dimension
+    using the repeat method of the tensor. The resulting tensor is then returned as the output of 
+    the forward method.
+
+    Note that this implementation assumes that the input tensor represents the seasonal part of a 
+    time series data. The purpose of subtracting the mean is to ensure that the output has a zero 
+    mean in each channel.
     """
 
     def __init__(self, channels):
@@ -23,6 +39,17 @@ class my_Layernorm(nn.Module):
 class moving_avg(nn.Module):
     """
     Moving average block to highlight the trend of time series
+
+    kernel_size: The size of the kernel to be used in the 1D average pooling operation.
+    stride: The stride of the pooling operation.
+
+    Input tensor x with the shape (batch_size, sequence_length, input_size)
+
+    The forward function takes an input tensor x of shape (batch_size, sequence_length, input_size) 
+    and applies a moving average operation on the time dimension (dimension 1) of the input. 
+    The implementation first pads the input tensor at both ends with a reflection of the first/last 
+    element in the time dimension, and then applies 1D average pooling with the specified kernel size 
+    and stride. Finally, the output tensor is returned with the same shape as the input tensor.
     """
 
     def __init__(self, kernel_size, stride):
@@ -46,6 +73,20 @@ class moving_avg(nn.Module):
 class series_decomp(nn.Module):
     """
     Series decomposition block
+
+    The constructor of this class takes an integer kernel_size as input, which represents the kernel size 
+    of the moving average filter. In the __init__ method, it initializes a moving_avg instance with 
+    kernel_size as the input kernel size and stride=1.
+
+    The forward method takes an input tensor x of shape (batch_size, sequence_length, input_size) and applies 
+    the moving_avg instance to the input tensor. The resulting tensor is subtracted from the input tensor to 
+    obtain the residual tensor. The residual tensor and the moving average tensor are returned as the output
+    of the forward method.
+
+    Note that this implementation assumes that the input tensor has a time-domain signal along the second dimension,
+    and the output tensors will have the same shape as the input tensor. The purpose of this block is to decompose a
+    time series signal into a trend and a seasonal component. The moving average filter is used to extract the seasonal
+    component of the signal, which is then subtracted from the input signal to obtain the trend component.
     """
 
     def __init__(self, kernel_size):
@@ -61,6 +102,20 @@ class series_decomp(nn.Module):
 class series_decomp_multi(nn.Module):
     """
     Series decomposition block
+
+    The constructor of this class takes a list of kernel sizes kernel_size as input. 
+    In the __init__ method, it initializes multiple moving_avg instances with each kernel 
+    size, and a Linear layer with input size 1 and output size equal to the number of kernel sizes.
+
+    The forward method takes an input tensor x of shape (batch_size, sequence_length, input_size) and 
+    first applies each moving_avg instance to x. The resulting tensors are concatenated along the last
+    dimension and passed through the Linear layer followed by a softmax function to obtain a set of weights 
+    for each kernel size. The weighted average of the moving averages is then computed, and the resulting
+    tensor is subtracted from x to obtain the residual tensor. The residual tensor and the weighted average
+    tensor are returned as the output of the forward method.
+
+    Note that this implementation assumes that the input tensor has a time-domain signal along the second 
+    dimension, and the output tensors will have the same shape as the input tensor.
     """
 
     def __init__(self, kernel_size):
@@ -82,6 +137,14 @@ class series_decomp_multi(nn.Module):
 
 
 class FourierDecomp(nn.Module):
+    """
+    The constructor of this class does not define any parameters. In the forward function, 
+    it takes an input tensor x of shape (batch_size, ..., sequence_length) and applies the 
+    real-valued fast Fourier transform (FFT) to the last dimension (i.e., dim=-1) of the 
+    input tensor. The resulting tensor x_ft will have shape (batch_size, ..., sequence_length//2+1, 2) 
+    where the last dimension represents the real and imaginary parts of the Fourier coefficients.
+    
+    """
     def __init__(self):
         super(FourierDecomp, self).__init__()
         pass
@@ -93,6 +156,18 @@ class FourierDecomp(nn.Module):
 class EncoderLayer(nn.Module):
     """
     Autoformer encoder layer with the progressive decomposition architecture
+
+    The EncoderLayer class takes as input a multi-head self-attention module (defined outside of this class),
+    the dimension of the model (d_model), the number of neurons in the feedforward sublayer (d_ff), a kernel 
+    size (moving_avg) for a series decomposition block, the dropout probability, and an activation function 
+    (either ReLU or GeLU).
+
+    The forward() method applies the self-attention module to the input tensor x, then adds a residual connection 
+    with dropout. It then applies a series decomposition block to the output of this step. The result of this step 
+    is stored in x and y, with x being passed through a convolutional feedforward sublayer, and then added to y 
+    before passing through another series decomposition block. The final output of the forward() method is the 
+    residual output of this second decomposition block, as well as the attention tensor returned by the attention 
+    module.
     """
 
     def __init__(self, attention, d_model, d_ff=None, moving_avg=25, dropout=0.1, activation="relu"):

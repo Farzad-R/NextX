@@ -31,7 +31,27 @@ class FourierBlock(nn.Module):
         print('fourier enhanced block used!')
         """
         1D Fourier block. It performs representation learning on frequency domain, 
-        it does FFT, linear transform, and Inverse FFT.    
+        it does FFT, linear transform, and Inverse FFT.
+
+        The __init__ method of the FourierBlock module takes as input the number of input channels, number of output 
+        channels, sequence length, number of modes, and mode selection method. It then initializes the index attribute
+        by calling the get_frequency_modes function with the given parameters. It also initializes the weights1 
+        attribute as a PyTorch parameter tensor of shape (8, in_channels // 8, out_channels // 8, len(self.index)) 
+        with complex-valued elements, which will be used to perform the linear transformation in the frequency domain.
+
+        The compl_mul1d method performs complex multiplication between two tensors along their last dimension, which represents 
+        the frequency domain. It uses the einsum function in PyTorch to perform the multiplication efficiently.    
+
+        The forward method of the FourierBlock module takes as input the query tensor q, key tensor k, value tensor v, and mask 
+        tensor. It first permutes the dimensions of q so that the last dimension (which represents the time domain) becomes the 
+        second dimension. It then computes the Fourier coefficients of q using the rfft function in PyTorch, which returns a 
+        complex-valued tensor of shape (B, H, E, L // 2 + 1) (where B is the batch size, H is the number of heads, E is the 
+        embedding dimension, and L is the sequence length).
+
+        Next, it performs the Fourier neural operation by multiplying the Fourier coefficients of q with the weights1 tensor along 
+        the last dimension using the compl_mul1d method. It then returns to the time domain by applying the irfft function in PyTorch,
+        which returns a real-valued tensor of shape (B, H, E, L). Finally, it returns the output tensor and None for the attention 
+        weights, since this module does not perform any attention operation.
         """
         # get modes on frequency domain
         self.index = get_frequency_modes(seq_len, modes=modes, mode_select_method=mode_select_method)
